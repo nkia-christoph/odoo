@@ -41,12 +41,13 @@ def handle_history_divergence(record, html_field_name, vals):
     if html_field_name in vals and record[html_field_name]:
         incoming_html = vals[html_field_name]
         incoming_history_matches = re.search(diverging_history_regex, incoming_html)
-        incoming_history_ids = incoming_history_matches[1].split(',')
-        incoming_last_history_id = incoming_history_ids[-1]
 
         if incoming_history_matches is None:
             logger.error('The document was already saved from someone with a different history for model %r, field %r with id %r.', record._name, html_field_name, record.id)
             raise ValidationError(_('The document was already saved from someone with a different history for model %r, field %r with id %r.', record._name, html_field_name, record.id))
+ 
+        incoming_history_ids = incoming_history_matches[1].split(',')
+        incoming_last_history_id = incoming_history_ids[-1]
 
         ensure_no_history_divergence(record, html_field_name, incoming_history_ids)
 
